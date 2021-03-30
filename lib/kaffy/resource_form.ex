@@ -57,7 +57,15 @@ defmodule Kaffy.ResourceForm do
 
     cond do
       !is_nil(choices) ->
-        select(form, field, choices, class: "custom-select", disabled: permission == :readonly)
+        options =
+          Enum.map(choices, fn choice ->
+            "<option value=\"#{elem(choice, 1)}\">#{elem(choice, 0)}</option>"
+          end)
+          |> Enum.join()
+
+        raw(
+          "<input list=\"#{field}s\" id=\"#{form.id}_#{field}\" name=\"#{form.id}[#{field}]\" class=\"custom-select\" value=\"#{Map.get(form.data, field)}\"><datalist id=\"#{field}s\">#{options}</datalist>"
+        )
 
       true ->
         build_html_input(
