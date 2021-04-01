@@ -57,15 +57,19 @@ defmodule Kaffy.ResourceForm do
 
     cond do
       !is_nil(choices) ->
-        options =
-          Enum.map(choices, fn choice ->
-            "<option value=\"#{elem(choice, 1)}\">#{elem(choice, 0)}</option>"
-          end)
-          |> Enum.join()
+        if length(choices) > 10 do
+          options =
+            Enum.map(choices, fn choice ->
+              "<option value=\"#{elem(choice, 1)}\">#{elem(choice, 0)}</option>"
+            end)
+            |> Enum.join()
 
-        raw(
-          "<input list=\"#{field}s\" id=\"#{form.id}_#{field}\" name=\"#{form.id}[#{field}]\" class=\"custom-select\" value=\"#{Map.get(form.data, field)}\"><datalist id=\"#{field}s\">#{options}</datalist>"
-        )
+          raw(
+            "<input list=\"#{field}s\" id=\"#{form.id}_#{field}\" name=\"#{form.id}[#{field}]\" class=\"custom-select\" value=\"#{Map.get(form.data, field)}\"><datalist id=\"#{field}s\">#{options}</datalist>"
+          )
+        else
+          select(form, field, choices, class: "custom-select")
+        end
 
       true ->
         build_html_input(
